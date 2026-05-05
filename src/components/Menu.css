@@ -1,0 +1,22 @@
+.menu {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: #23242a;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  z-index: 50;
+}
+
+.menu a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.menu a:hover {
+  color: #389cd1;
+}

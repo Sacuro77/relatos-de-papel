@@ -1,0 +1,22 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f5f7fa;
+  color: #23242a;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.app-main {
+  width: 100%;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.app h1 {
+  color: #389cd1;
+}
+
+button {
+  font-family: inherit;
+}
