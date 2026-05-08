@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import SearchBar from '../components/SearchBar'
 import { booksData } from '../data/books'
-import { useCart } from '../hooks/useCart'
 import './Products.css'
 
 function Products() {
   const [search, setSearch] = useState('')
   const [books] = useState(booksData)
-
-  const { addToCart } = useCart()
 
   useEffect(() => {
     console.log('La página de productos se cargó correctamente')
@@ -27,18 +25,37 @@ function Products() {
 
       <SearchBar search={search} onSearchChange={setSearch} />
 
-      <p className="products-search-text">Buscando: {search}</p>
+      <p className="products-search-text">
+        Buscando: {search}
+      </p>
 
       <div className="products-grid">
         {filteredBooks.map((book) => (
           <article className="book-card" key={book.id}>
-            <h3>{book.title}</h3>
-            <p className="book-author">{book.author}</p>
-            <p className="book-price">${book.price}</p>
 
-            <button onClick={() => addToCart(book)}>
-              Agregar al carrito
-            </button>
+            <img
+              className="book-image"
+              src={book.image}
+              alt={book.title}
+            />
+
+            <h3>{book.title}</h3>
+
+            <p className="book-author">
+              {book.author}
+            </p>
+
+            <p className="book-price">
+              ${book.price}
+            </p>
+
+            <Link
+              className="book-detail-link"
+              to={`/product/${book.id}`}
+            >
+              Ver detalle
+            </Link>
+
           </article>
         ))}
       </div>

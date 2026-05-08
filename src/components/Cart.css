@@ -1,9 +1,9 @@
 .cart-box {
   position: fixed;
   right: 24px;
-  top: 120px;
+  top: 140px;
   width: 280px;
-  max-height: 70vh;
+  max-height: calc(100vh - 180px);
   overflow-y: auto;
   background: #ffffff;
   border: 1px solid #e0e0e0;
@@ -63,4 +63,13 @@
 
 .cart-remove:hover {
   background: #b71c1c;
+}
+
+@media (max-width: 1200px) {
+  .cart-box {
+    position: static;
+    width: auto;
+    max-height: none;
+    margin: 24px 32px;
+  }
 }

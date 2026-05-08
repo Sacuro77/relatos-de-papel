@@ -12,10 +12,13 @@ import ProductDetail from './pages/ProductDetail'
 import Profile from './pages/Profile'
 import Checkout from './pages/Checkout'
 
+import PrivateRoute from './components/PrivateRoute'
+
 function App() {
   return (
     <BrowserRouter>
       <div className="app">
+
         <Menu />
 
         <main className="app-main">
@@ -24,12 +27,29 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/products" element={<Products />} />
             <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/checkout" element={<Checkout />} />
+
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/checkout"
+              element={
+                <PrivateRoute>
+                  <Checkout />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </main>
 
         <Cart />
+
         <Footer />
       </div>
     </BrowserRouter>

@@ -1,48 +1,122 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
+import { AuthContext } from '../context/auth/AuthContext'
+import { useLogin } from '../hooks/useLogin'
+import './Login.css'
 
 function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  })
 
-  const handleSubmit = (e) => {
+  const [fieldErrors, setFieldErrors] = useState({})
+
+  const { user } = useContext(AuthContext)
+  const location = useLocation()
+  const { login, isLoading, error, clearError } = useLogin()
+
+  if (user) {
+    const from = location.state?.from || '/profile'
+    return <Navigate to={from} replace />
+  }
+
+  function handleChange(e) {
+    const { name, value } = e.target
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }))
+    }
+
+    if (error) {
+      clearError()
+    }
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault()
 
-    console.log('Email:', email)
-    console.log('Password:', password)
+    const newErrors = {}
 
-    alert('Formulario enviado')
+    if (!formData.username.trim()) {
+      newErrors.username = 'El usuario es obligatorio'
+    }
+
+    if (!formData.password.trim()) {
+      newErrors.password = 'La contraseña es obligatoria'
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors)
+      return
+    }
+
+    const result = await login(formData.username, formData.password)
+
+    if (result.success) {
+      setFormData({ username: '', password: '' })
+      setFieldErrors({})
+    }
   }
 
   return (
-    <section>
-      <h1>Inicio de sesión</h1>
-      <p>Formulario de acceso a la aplicación.</p>
+    <section className="login-page">
+      <h1>Iniciar Sesión</h1>
+      <p>Accede a tu cuenta de Relatos de Papel</p>
 
       <form onSubmit={handleSubmit}>
+        {error && <p className="login-error">{error}</p>}
+
         <div>
-          <label htmlFor="email">Correo electrónico</label>
+          <label htmlFor="username">Usuario</label>
           <input
-            id="email"
-            type="email"
-            placeholder="usuario@correo.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id="username"
+            name="username"
+            type="text"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Nombre de usuario"
+            disabled={isLoading}
           />
+          {fieldErrors.username && (
+            <p className="login-error">{fieldErrors.username}</p>
+          )}
         </div>
 
         <div>
           <label htmlFor="password">Contraseña</label>
           <input
             id="password"
+            name="password"
             type="password"
-            placeholder="Ingrese su contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Contraseña"
+            disabled={isLoading}
           />
+          {fieldErrors.password && (
+            <p className="login-error">{fieldErrors.password}</p>
+          )}
         </div>
 
-        <button type="submit">Ingresar</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+        </button>
       </form>
+
+      <div className="login-demo">
+        <h3>Credenciales de prueba</h3>
+        <p><strong>Usuario:</strong> santiago</p>
+        <p><strong>Clave:</strong> 123456</p>
+      </div>
     </section>
   )
 }
