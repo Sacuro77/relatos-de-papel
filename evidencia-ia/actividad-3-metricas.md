@@ -37,7 +37,7 @@ Detalle sugerido:
 | Filtro Gateway | 430 | Si, compilado con `cloud-gateway` |
 | Proteccion orders | 260 | Si, compilado con `orders-service` |
 | RabbitMQ/eventos | 260 | Si, compilado con `orders-service` |
-| `comms-service` SMTP | Pendiente | Pendiente |
+| `comms-service` SMTP | 650 | Si, compilado en modo mock/log y SMTP basico |
 | WebSocket | Pendiente | Pendiente |
 | Gemini | Pendiente | Pendiente |
 | Docker/Compose | Pendiente | Pendiente |
@@ -46,7 +46,7 @@ Detalle sugerido:
 Total estimado:
 
 ```text
-1990 lineas aproximadas
+2640 lineas aproximadas
 ```
 
 ## Tiempo estimado ahorrado
@@ -61,14 +61,14 @@ Detalle sugerido:
 | Diseno users/auth | 4 a 6 horas |
 | Gateway phantom token | 3 a 5 horas |
 | Proteccion orders | 2 a 4 horas |
-| RabbitMQ/comms | 2 a 3 horas en publicacion de evento |
+| RabbitMQ/comms | 4 a 6 horas acumuladas en publicacion y consumidor |
 | Docker/despliegue | Pendiente |
 | Documentacion | Pendiente |
 
 Total estimado:
 
 ```text
-11 a 18 horas acumuladas en Fases 1 a 4, pendiente total final
+13 a 21 horas acumuladas en Fases 1 a 5, pendiente total final
 ```
 
 ## Errores detectados y corregidos manualmente
@@ -80,6 +80,7 @@ Pendiente de completar.
 | 2026-06-19 | No se pudo generar BCrypt con herramientas locales disponibles. | Se uso `PasswordEncoder` en seeder runtime y `pgcrypto` en SQL para insertar hash BCrypt sin almacenar contrasena plana. | `DemoUserSeeder.java`, `sql/06-users-dml.sql` |
 | 2026-06-19 | Gateway test intento conectarse a Eureka no levantado durante `mvnw test`. | Se verifico que era un aviso no bloqueante: el resultado final fue `BUILD SUCCESS`. | `cloud-gateway` logs de test |
 | 2026-06-19 | `orders-service` test intento conectar a PostgreSQL orders no levantado. | Se valido compilacion con `mvnw compile`; test de contexto queda condicionado a levantar PostgreSQL `localhost:5434`. | `orders-service` logs de test |
+| 2026-06-19 | Maven no pudo descargar `spring-boot-starter-mail` por certificado PKIX. | Se dejo `comms-service` compilable con modo mock/log y cliente SMTP basico con Java estandar; Spring Mail queda pendiente tecnico. | `comms-service`, `FASE_5_COMMS_SERVICE_EMAIL.md` |
 
 ## Observaciones de validacion manual
 

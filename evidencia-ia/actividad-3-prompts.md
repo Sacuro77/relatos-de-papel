@@ -161,3 +161,28 @@ Se implemento en `orders-service`:
 ## Decision tomada Fase 4
 
 Se decidio capturar errores `AmqpException` dentro del publisher para que RabbitMQ no revierta una orden ya persistida. Esto deja una ventana de consistencia eventual que sera mitigada mas adelante con consumidor, reintentos o outbox si se requiere mas robustez.
+
+## Prompt de implementacion Fase 5
+
+```text
+Implementa unicamente la Fase 5 de la Actividad 3: crear comms-service para consumir eventos OrderCreated desde RabbitMQ y gestionar notificacion por email.
+
+No modifiques catalogue-service, users-service, cloud-gateway, orders-service ni eureka-server. No implementes WebSocket, Gemini ni Docker Compose completo. comms-service debe registrarse en Eureka, consumir relatos.orders.created.queue, mapear OrderCreated, registrar logs claros y enviar email real si SMTP esta configurado o mock/log si MAIL_ENABLED=false.
+```
+
+## Resumen de respuesta Fase 5
+
+Se creo `comms-service` con:
+
+- Spring Boot 4.0.6, Java 17 y Spring Cloud 2025.1.1;
+- puerto `8084`;
+- registro Eureka como `comms-service`;
+- configuracion RabbitMQ para `relatos.orders.exchange`, `orders.created` y `relatos.orders.created.queue`;
+- DTOs `OrderCreatedEvent` y `OrderCreatedItemEvent`;
+- listener `OrderCreatedListener`;
+- servicio `EmailNotificationService` en modo mock/log local;
+- documentacion de pruebas y evidencia.
+
+## Decision tomada Fase 5
+
+Se intento usar `spring-boot-starter-mail`, pero Maven fallo descargando el artefacto por certificado PKIX contra Maven Central. Para mantener la fase compilable y demostrable, se dejo implementado el modo mock/log por defecto y un cliente SMTP basico con Java estandar cuando `MAIL_ENABLED=true`. Sustituirlo por Spring Mail queda como pendiente tecnico cuando se resuelva acceso a dependencias mail.
