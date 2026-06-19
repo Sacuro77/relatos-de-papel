@@ -50,3 +50,33 @@ Esta decision responde al aprendizaje de Actividad 2: los requisitos formales de
 ## Nota de validacion
 
 La implementacion sera revisada manualmente antes de aceptarse.
+
+## Prompt de implementacion Fase 1
+
+```text
+Implementa unicamente la Fase 1 de la Actividad 3: creacion de users-service con PostgreSQL, Redis, JWT y token opaco.
+
+No modifiques catalogue-service, orders-service, cloud-gateway, eureka-server ni docker-compose.yml. No implementes RabbitMQ, comms-service, WebSocket, Gemini ni Elasticsearch. No hagas commit.
+
+El servicio debe usar Java 17, Spring Boot 4.0.6, Spring Cloud 2025.1.1, puerto 8083, nombre Eureka users-service, PostgreSQL users_db, Redis, BCrypt y variables de entorno para secretos. Debe exponer login, validate, refresh y profile. El login devuelve solo token opaco. Validate devuelve JWT interno si el token opaco esta activo. Profile lee header accessToken.
+```
+
+## Resumen de respuesta Fase 1
+
+Se genero un nuevo modulo `users-service` con:
+
+- POM Maven alineado con Java 17, Spring Boot 4.0.6 y Spring Cloud 2025.1.1;
+- configuracion local de PostgreSQL, Redis, Eureka y JWT;
+- entidad `AppUser` y tabla auxiliar de roles;
+- repositorio `UserRepository`;
+- endpoints de autenticacion y perfil;
+- servicios `AuthService`, `JwtService` y `OpaqueTokenService`;
+- almacenamiento de token opaco en Redis con prefijo `phantom:token:`;
+- seeder runtime para usuario demo con contrasena BCrypt;
+- scripts SQL `05-users-ddl.sql` y `06-users-dml.sql`.
+
+## Decision tomada Fase 1
+
+Se decidio no activar seguridad web global en esta fase para no interferir con los endpoints publicos de autenticacion antes de implementar el Gateway defensor en Fase 2. La validacion de `accessToken` se hace explicitamente en el endpoint de perfil.
+
+Tambien se decidio no modificar `docker-compose.yml` todavia. PostgreSQL users y Redis quedan como pendientes operativos para levantar con comandos Docker temporales o integrarlos en Compose durante Fase 8.

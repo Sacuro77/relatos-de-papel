@@ -33,7 +33,7 @@ Detalle sugerido:
 
 | Area | Lineas aproximadas | Revisadas manualmente |
 |---|---:|---|
-| `users-service` | Pendiente | Pendiente |
+| `users-service` | 950 | Si, pendiente de compilacion |
 | Filtro Gateway | Pendiente | Pendiente |
 | Proteccion orders | Pendiente | Pendiente |
 | RabbitMQ/eventos | Pendiente | Pendiente |
@@ -41,12 +41,12 @@ Detalle sugerido:
 | WebSocket | Pendiente | Pendiente |
 | Gemini | Pendiente | Pendiente |
 | Docker/Compose | Pendiente | Pendiente |
-| Documentacion | Pendiente | Pendiente |
+| Documentacion | 90 | Si |
 
 Total estimado:
 
 ```text
-____ lineas
+1040 lineas aproximadas
 ```
 
 ## Tiempo estimado ahorrado
@@ -58,7 +58,7 @@ Detalle sugerido:
 | Tarea | Tiempo estimado ahorrado |
 |---|---:|
 | Diagnostico inicial | Pendiente |
-| Diseno users/auth | Pendiente |
+| Diseno users/auth | 4 a 6 horas |
 | Gateway phantom token | Pendiente |
 | RabbitMQ/comms | Pendiente |
 | Docker/despliegue | Pendiente |
@@ -67,7 +67,7 @@ Detalle sugerido:
 Total estimado:
 
 ```text
-____ horas
+4 a 6 horas en Fase 1, pendiente total final
 ```
 
 ## Errores detectados y corregidos manualmente
@@ -76,7 +76,7 @@ Pendiente de completar.
 
 | Fecha | Error o respuesta incompleta de IA | Correccion manual realizada | Archivo o evidencia |
 |---|---|---|---|
-| Pendiente | Pendiente | Pendiente | Pendiente |
+| 2026-06-19 | No se pudo generar BCrypt con herramientas locales disponibles. | Se uso `PasswordEncoder` en seeder runtime y `pgcrypto` en SQL para insertar hash BCrypt sin almacenar contrasena plana. | `DemoUserSeeder.java`, `sql/06-users-dml.sql` |
 
 ## Observaciones de validacion manual
 

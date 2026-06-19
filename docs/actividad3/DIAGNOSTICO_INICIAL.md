@@ -16,7 +16,7 @@ Actividad_3_Backend_Relatos_Papel/
 └── docker-compose.yml
 ```
 
-No se observa frontend React dentro de este arbol de trabajo. Tampoco existen todavia los microservicios `users-service` ni `comms-service`.
+No se observa frontend React dentro de este arbol de trabajo. Al inicio de Fase 0 tampoco existian los microservicios `users-service` ni `comms-service`.
 
 ## Servicios existentes
 
@@ -26,14 +26,14 @@ No se observa frontend React dentro de este arbol de trabajo. Tampoco existen to
 | `catalogue-service` | Existente | CRUD, busqueda y disponibilidad de libros. |
 | `orders-service` | Existente | Registro y consulta de pedidos. |
 | `cloud-gateway` | Existente | Enrutamiento hacia catalogue y orders mediante Spring Cloud Gateway Server WebMVC. |
+| `users-service` | Creado en Fase 1, pendiente de validacion runtime | Autenticacion, JWT interno, token opaco y validacion para Gateway. |
 
 ## Servicios faltantes
 
 | Servicio/componente | Estado inicial | Necesidad para Actividad 3 |
 |---|---|---|
-| `users-service` | No existe | Autenticacion, autorizacion, JWT, token opaco y validacion para Gateway. |
 | `comms-service` | No existe | Consumidor RabbitMQ, envio SMTP/Gmail, WebSocket y Gemini. |
-| Redis | No configurado | Almacenamiento token opaco -> JWT para patron phantom token. |
+| Redis | Configurado en `users-service`, pendiente de levantar en Docker/Compose | Almacenamiento token opaco -> JWT para patron phantom token. |
 | RabbitMQ | No configurado | Broker para evento `OrderCreated`. |
 | Frontend React | No localizado en este repo | Debe consumir exclusivamente por Gateway. |
 | Dockerfiles | No existen | Necesarios para despliegue local completo y remoto. |
@@ -81,6 +81,32 @@ Riesgo actual:
 - No se publica evento `OrderCreated`.
 - No existe integracion con RabbitMQ.
 
+## Estado actual de users-service
+
+Fase 1 creo un nuevo modulo `users-service` con Java 17, Spring Boot 4.0.6 y Spring Cloud 2025.1.1, alineado con los demas servicios.
+
+Estado implementado pendiente de validacion runtime:
+
+- nombre Eureka `users-service`;
+- puerto local `8083`;
+- datasource PostgreSQL local previsto en `localhost:5435/users_db`;
+- Redis local previsto en `localhost:6379`;
+- endpoint `POST /api/v1/auth/login`;
+- endpoint `POST /api/v1/auth/validate`;
+- endpoint `POST /api/v1/auth/refresh`;
+- endpoint `GET /api/v1/users/profile`;
+- generacion de JWT interno con claims `sub`, `email`, `roles`, `iat`, `exp` e `iss`;
+- generacion de token opaco externo;
+- almacenamiento `opaqueToken -> JWT` en Redis con TTL;
+- usuario demo `cliente@relatos.com` con contrasena `123456` hasheada mediante BCrypt por seeder runtime;
+- scripts SQL `05-users-ddl.sql` y `06-users-dml.sql`.
+
+Pendiente:
+
+- levantar PostgreSQL users y Redis en Docker Compose final;
+- compilar y probar cuando se autorice ejecutar Maven;
+- integrar validacion desde Gateway en Fase 2.
+
 ## Estado actual de catalogue-service
 
 `catalogue-service` contiene:
@@ -127,8 +153,8 @@ No existen Dockerfiles por microservicio.
 
 ## Riesgos principales detectados
 
-1. No existe `users-service`, por lo que no hay autenticacion ni autorizacion.
-2. No existe implementacion de phantom token.
+1. `users-service` fue creado en Fase 1, pero aun falta validacion runtime y conexion desde Gateway.
+2. Phantom token esta implementado en `users-service`, pero falta filtro Java en Gateway.
 3. Gateway carece de filtro Java formal, punto critico por la retroalimentacion de Actividad 2.
 4. Endpoints de datos de cliente en orders no estan protegidos.
 5. `orders-service` acepta `userId` desde la peticion, lo que permite suplantacion si no se corrige.
