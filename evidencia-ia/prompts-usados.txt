@@ -1,0 +1,118 @@
+EVIDENCIA DE USO DE INTELIGENCIA ARTIFICIAL
+Actividad 2 - Desarrollo back-end: microservicios con Java y Spring
+Proyecto: Relatos de Papel
+
+1. Alcance del uso de IA
+
+Se utilizó inteligencia artificial como herramienta de apoyo al desarrollo, principalmente en las tareas indicadas en el enunciado de la actividad:
+
+* Apoyo para la construcción de la estructura de las bases de datos.
+* Generación de sentencias DDL.
+* Generación inicial de POJO / entidades Java asociadas a las tablas.
+* Generación de sentencias DML.
+* Generación de datos de prueba para poblar el catálogo con más de 100 libros.
+
+Adicionalmente, se utilizó IA como apoyo de aprendizaje y depuración para interpretar errores de compilación, revisar configuraciones y organizar la secuencia de trabajo. Todo el código fue revisado, ajustado y probado manualmente antes de considerarlo válido.
+
+2. Prompts principales utilizados
+
+Prompt 1:
+Ayúdame a diseñar las tablas necesarias para el microservicio catalogue de Relatos de Papel. La tabla principal debe representar libros y debe incluir título, autor, fecha de publicación, categoría, ISBN, valoración, visibilidad, stock, precio, descripción, URL de imagen y fechas de creación/actualización.
+
+Resultado obtenido:
+Se obtuvo una propuesta de tabla books y posteriormente se ajustó el archivo 01-catalogue-ddl.sql para PostgreSQL.
+
+Prompt 2:
+Ayúdame a diseñar las tablas necesarias para el microservicio orders. Debe guardar órdenes de compra y sus ítems, considerando usuario, estado, total, libro comprado, cantidad, precio unitario y subtotal.
+
+Resultado obtenido:
+Se obtuvo una propuesta de tablas orders y order_items, usada como base para el archivo 03-orders-ddl.sql.
+
+Prompt 3:
+Genera una entidad Java Book para Spring Boot y JPA con los campos de la tabla books. Debe incluir validaciones básicas y campos de auditoría createdAt y updatedAt.
+
+Resultado obtenido:
+Se obtuvo una clase base Book, luego ajustada manualmente para coincidir con los paquetes del proyecto y con el uso de Lombok, JPA y Bean Validation.
+
+Prompt 4:
+Genera las entidades Java PurchaseOrder y OrderItem para representar órdenes de compra en Spring Boot con JPA.
+
+Resultado obtenido:
+Se obtuvo una estructura inicial para las entidades de orders-service. Posteriormente se corrigió manualmente la serialización JSON para evitar ciclos entre PurchaseOrder y OrderItem.
+
+Prompt 5:
+Genera sentencias DML para insertar más de 100 libros en la tabla books, con datos realistas para título, autor, fecha de publicación, categoría, ISBN, valoración, visibilidad, stock, precio, descripción e imagen.
+
+Resultado obtenido:
+Se generó el archivo 02-catalogue-dml.sql con más de 100 registros de libros para poblar la base catalogue_db.
+
+Prompt 6:
+Genera datos de prueba para las tablas orders y order_items, usando como referencia un libro existente del catálogo.
+
+Resultado obtenido:
+Se generó el archivo 04-orders-dml.sql con órdenes de prueba e ítems asociados.
+
+3. Uso de IA como apoyo técnico adicional
+
+Además de las tareas anteriores, se utilizó IA como apoyo para comprender errores y realizar ajustes durante el desarrollo, por ejemplo:
+
+* Corrección de paquetes Java generados por Spring Initializr.
+* Interpretación de errores Maven.
+* Ajuste de configuración de Spring Cloud Gateway.
+* Corrección de serialización infinita en respuestas JSON.
+* Organización de comandos de prueba en PowerShell.
+
+Estas respuestas fueron consideradas como apoyo técnico y no como sustitución de la validación del estudiante. Cada cambio fue probado manualmente mediante compilación, ejecución local y llamadas REST.
+
+4. Resultados obtenidos
+
+Respuestas correctas o parcialmente correctas:
+Aproximadamente 85%.
+
+Respuestas incorrectas o que requirieron corrección:
+Aproximadamente 15%.
+
+Principales correcciones realizadas manualmente:
+
+* Ajuste de nombres de paquetes como catalogue_service, orders_service y cloud_gateway.
+* Corrección de configuración de Spring Cloud Gateway Server WebMVC.
+* Corrección de serialización circular entre PurchaseOrder y OrderItem.
+* Ajuste del DTO BookAvailabilityResponse para incluir título, precio y mensaje.
+* Revisión de rutas para asegurar que la comunicación entre microservicios no use localhost ni puerto fijo.
+
+5. Líneas aproximadas generadas con apoyo de IA
+
+Se estima que entre 900 y 1300 líneas fueron generadas o estructuradas con apoyo de IA, considerando:
+
+* Entidades Java.
+* DTOs.
+* Servicios y controladores base.
+* Configuraciones application.properties.
+* Sentencias SQL DDL y DML.
+* Comandos de prueba.
+
+6. Tiempo estimado ahorrado
+
+Se estima un ahorro aproximado de 10 a 14 horas, principalmente en:
+
+* Diseño inicial de tablas.
+* Generación de entidades base.
+* Generación de datos de prueba.
+* Preparación de sentencias SQL.
+* Depuración guiada de errores.
+* Organización de pruebas REST.
+
+7. Validación manual realizada
+
+Se validó manualmente:
+
+* Compilación de cada proyecto con Maven.
+* Ejecución local de Eureka Server.
+* Registro de catalogue-service, orders-service y cloud-gateway en Eureka.
+* Conexión de cada microservicio con su propia base de datos.
+* Funcionamiento de endpoints REST de catalogue.
+* Funcionamiento de endpoints REST de orders.
+* Comunicación orders-service hacia catalogue-service usando el nombre lógico catalogue-service.
+* Enrutamiento mediante Cloud Gateway.
+* Creación de órdenes mediante Gateway.
+* Consulta de órdenes recientes mediante Gateway.

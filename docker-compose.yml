@@ -1,0 +1,30 @@
+services:
+  postgres-catalogue:
+    image: postgres:16
+    container_name: postgres-catalogue
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: catalogue_db
+      POSTGRES_USER: catalogue_user
+      POSTGRES_PASSWORD: catalogue_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - catalogue_data:/var/lib/postgresql/data
+
+  postgres-orders:
+    image: postgres:16
+    container_name: postgres-orders
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: orders_db
+      POSTGRES_USER: orders_user
+      POSTGRES_PASSWORD: orders_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - orders_data:/var/lib/postgresql/data
+
+volumes:
+  catalogue_data:
+  orders_data:
