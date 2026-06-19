@@ -7,6 +7,8 @@ import com.actividad2.orders_service.dto.OrderRequest;
 import com.actividad2.orders_service.dto.OrderResponse;
 import com.actividad2.orders_service.entity.OrderItem;
 import com.actividad2.orders_service.entity.PurchaseOrder;
+import com.actividad2.orders_service.event.OrderCreatedEvent;
+import com.actividad2.orders_service.publisher.OrderEventPublisher;
 import com.actividad2.orders_service.repository.PurchaseOrderRepository;
 import com.actividad2.orders_service.security.AuthenticatedUser;
 import org.springframework.stereotype.Service;
@@ -19,13 +21,16 @@ public class OrderService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final CatalogueClient catalogueClient;
+    private final OrderEventPublisher orderEventPublisher;
 
     public OrderService(
             PurchaseOrderRepository purchaseOrderRepository,
-            CatalogueClient catalogueClient
+            CatalogueClient catalogueClient,
+            OrderEventPublisher orderEventPublisher
     ) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.catalogueClient = catalogueClient;
+        this.orderEventPublisher = orderEventPublisher;
     }
 
     public OrderResponse create(OrderRequest request, AuthenticatedUser authenticatedUser) {
@@ -80,6 +85,7 @@ public class OrderService {
         order.setTotal(orderTotal);
 
         PurchaseOrder savedOrder = purchaseOrderRepository.save(order);
+        orderEventPublisher.publishOrderCreated(OrderCreatedEvent.from(savedOrder, authenticatedUser));
 
         return new OrderResponse(
                 savedOrder.getId(),

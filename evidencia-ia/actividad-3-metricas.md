@@ -36,7 +36,7 @@ Detalle sugerido:
 | `users-service` | 950 | Si, pendiente de compilacion |
 | Filtro Gateway | 430 | Si, compilado con `cloud-gateway` |
 | Proteccion orders | 260 | Si, compilado con `orders-service` |
-| RabbitMQ/eventos | Pendiente | Pendiente |
+| RabbitMQ/eventos | 260 | Si, compilado con `orders-service` |
 | `comms-service` SMTP | Pendiente | Pendiente |
 | WebSocket | Pendiente | Pendiente |
 | Gemini | Pendiente | Pendiente |
@@ -46,7 +46,7 @@ Detalle sugerido:
 Total estimado:
 
 ```text
-1730 lineas aproximadas
+1990 lineas aproximadas
 ```
 
 ## Tiempo estimado ahorrado
@@ -61,14 +61,14 @@ Detalle sugerido:
 | Diseno users/auth | 4 a 6 horas |
 | Gateway phantom token | 3 a 5 horas |
 | Proteccion orders | 2 a 4 horas |
-| RabbitMQ/comms | Pendiente |
+| RabbitMQ/comms | 2 a 3 horas en publicacion de evento |
 | Docker/despliegue | Pendiente |
 | Documentacion | Pendiente |
 
 Total estimado:
 
 ```text
-9 a 15 horas acumuladas en Fases 1 a 3, pendiente total final
+11 a 18 horas acumuladas en Fases 1 a 4, pendiente total final
 ```
 
 ## Errores detectados y corregidos manualmente

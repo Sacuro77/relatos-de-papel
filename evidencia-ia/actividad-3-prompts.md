@@ -134,3 +134,30 @@ Se implemento en `orders-service`:
 Se mantuvo temporalmente el campo `userId` en `OrderRequest` como obsoleto para no romper clientes antiguos, pero se elimino del flujo de negocio. El usuario real de la orden siempre sale del JWT interno.
 
 Se realizo un ajuste minimo en `cloud-gateway` para proteger y enrutar tambien la ruta base `POST /api/v1/orders`, necesaria para la API final.
+
+## Prompt de implementacion Fase 4
+
+```text
+Implementa unicamente la Fase 4 de la Actividad 3: publicacion de evento OrderCreated desde orders-service hacia RabbitMQ.
+
+No modifiques catalogue-service, users-service, cloud-gateway ni eureka-server. No implementes comms-service ni consumidor todavia. Cuando orders-service cree correctamente un pedido, debe publicar OrderCreated con RabbitTemplate en RabbitMQ. Si RabbitMQ falla, no debe romper la creacion del pedido ya persistido; debe registrar log claro y documentar consistencia eventual.
+```
+
+## Resumen de respuesta Fase 4
+
+Se implemento en `orders-service`:
+
+- dependencia `spring-boot-starter-amqp`;
+- propiedades RabbitMQ locales configurables por entorno;
+- exchange `relatos.orders.exchange`;
+- routing key `orders.created`;
+- queue `relatos.orders.created.queue`;
+- configuracion `RabbitMqConfig`;
+- DTO principal `OrderCreatedEvent`;
+- DTO de items `OrderCreatedItemEvent`;
+- publisher `OrderEventPublisher`;
+- publicacion despues de `purchaseOrderRepository.save(order)`.
+
+## Decision tomada Fase 4
+
+Se decidio capturar errores `AmqpException` dentro del publisher para que RabbitMQ no revierta una orden ya persistida. Esto deja una ventana de consistencia eventual que sera mitigada mas adelante con consumidor, reintentos o outbox si se requiere mas robustez.
