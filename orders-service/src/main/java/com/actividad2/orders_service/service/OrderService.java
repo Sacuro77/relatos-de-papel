@@ -8,6 +8,7 @@ import com.actividad2.orders_service.dto.OrderResponse;
 import com.actividad2.orders_service.entity.OrderItem;
 import com.actividad2.orders_service.entity.PurchaseOrder;
 import com.actividad2.orders_service.repository.PurchaseOrderRepository;
+import com.actividad2.orders_service.security.AuthenticatedUser;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,9 +28,9 @@ public class OrderService {
         this.catalogueClient = catalogueClient;
     }
 
-    public OrderResponse create(OrderRequest request) {
+    public OrderResponse create(OrderRequest request, AuthenticatedUser authenticatedUser) {
         PurchaseOrder order = PurchaseOrder.builder()
-                .userId(request.getUserId())
+                .userId(authenticatedUser.getUserId())
                 .status("CREATED")
                 .total(BigDecimal.ZERO)
                 .build();
@@ -95,5 +96,13 @@ public class OrderService {
     public PurchaseOrder findById(Long orderId) {
         return purchaseOrderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada con id: " + orderId));
+    }
+
+    public PurchaseOrder findByIdForUser(Long orderId, String userId) {
+        PurchaseOrder order = findById(orderId);
+        if (!userId.equals(order.getUserId())) {
+            throw new RuntimeException("Orden no encontrada con id: " + orderId);
+        }
+        return order;
     }
 }

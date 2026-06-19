@@ -120,6 +120,7 @@ public class PhantomTokenFilter extends OncePerRequestFilter {
 
     private boolean isProtectedRoute(String path) {
         return matchesAny(path, List.of(
+                "/api/v1/orders",
                 "/api/v1/orders/**",
                 "/api/v1/users/profile",
                 "/orders/**",

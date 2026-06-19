@@ -35,7 +35,7 @@ Estos endpoints requieren `Authorization: Bearer <opaqueToken>`:
 
 | Ruta | Motivo |
 |---|---|
-| `/api/v1/orders/**` | Opera con pedidos y datos de cliente. |
+| `/api/v1/orders` y `/api/v1/orders/**` | Opera con pedidos y datos de cliente. |
 | `/api/v1/users/profile` | Expone perfil del usuario autenticado. |
 | `/orders/**` | Ruta legacy temporal de pedidos. |
 | `/api/orders/**` | Ruta legacy temporal de pedidos. |
@@ -49,7 +49,7 @@ La arquitectura de Actividad 3 prioriza `/api/v1/**`:
 | `/api/v1/auth/**` | `lb://users-service` |
 | `/api/v1/users/**` | `lb://users-service` |
 | `/api/v1/books/**` | `lb://catalogue-service` |
-| `/api/v1/orders/**` | `lb://orders-service` |
+| `/api/v1/orders` y `/api/v1/orders/**` | `lb://orders-service` |
 
 Se mantienen rutas legacy de Actividad 2 para no romper pruebas anteriores:
 

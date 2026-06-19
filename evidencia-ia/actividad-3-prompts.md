@@ -106,3 +106,31 @@ Se implemento en `cloud-gateway`:
 Se uso un filtro Servlet `OncePerRequestFilter` porque el proyecto usa Spring Cloud Gateway Server WebMVC. Esta decision evita usar APIs reactivas de WebFlux que no corresponden al stack actual.
 
 Para validar contra `users-service`, se uso `LoadBalancerClient` y el nombre logico `users-service`, evitando `localhost:8083` como solucion final.
+
+## Prompt de implementacion Fase 3
+
+```text
+Implementa unicamente la Fase 3 de la Actividad 3: proteger orders-service usando el JWT interno recibido en el header accessToken.
+
+No modifiques catalogue-service, users-service, cloud-gateway salvo ajuste estrictamente necesario, ni eureka-server. Orders debe rechazar operaciones sin accessToken, validar JWT con el mismo JWT_SECRET e issuer que users-service, extraer sub/email/roles, ignorar userId enviado por el cliente y asociar las ordenes al usuario autenticado.
+```
+
+## Resumen de respuesta Fase 3
+
+Se implemento en `orders-service`:
+
+- dependencia JWT compatible con `users-service`;
+- propiedades `app.jwt.secret`, `app.jwt.issuer` y `app.security.access-token-header`;
+- clase `InternalJwtService` para validar firma, issuer y expiracion;
+- clase `AuthenticatedUser` con `userId`, `email` y `roles`;
+- excepcion `AuthenticationException` con respuesta `401`;
+- proteccion de todos los endpoints de pedidos mediante header `accessToken`;
+- nueva ruta `GET /api/v1/orders/recent`;
+- mantenimiento de `GET /api/v1/orders/recent/{userId}` ignorando el path y usando el JWT;
+- creacion de pedidos usando el claim `sub`, no el body.
+
+## Decision tomada Fase 3
+
+Se mantuvo temporalmente el campo `userId` en `OrderRequest` como obsoleto para no romper clientes antiguos, pero se elimino del flujo de negocio. El usuario real de la orden siempre sale del JWT interno.
+
+Se realizo un ajuste minimo en `cloud-gateway` para proteger y enrutar tambien la ruta base `POST /api/v1/orders`, necesaria para la API final.

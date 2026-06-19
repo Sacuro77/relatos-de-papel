@@ -35,7 +35,7 @@ Detalle sugerido:
 |---|---:|---|
 | `users-service` | 950 | Si, pendiente de compilacion |
 | Filtro Gateway | 430 | Si, compilado con `cloud-gateway` |
-| Proteccion orders | Pendiente | Pendiente |
+| Proteccion orders | 260 | Si, compilado con `orders-service` |
 | RabbitMQ/eventos | Pendiente | Pendiente |
 | `comms-service` SMTP | Pendiente | Pendiente |
 | WebSocket | Pendiente | Pendiente |
@@ -46,7 +46,7 @@ Detalle sugerido:
 Total estimado:
 
 ```text
-1470 lineas aproximadas
+1730 lineas aproximadas
 ```
 
 ## Tiempo estimado ahorrado
@@ -60,6 +60,7 @@ Detalle sugerido:
 | Diagnostico inicial | Pendiente |
 | Diseno users/auth | 4 a 6 horas |
 | Gateway phantom token | 3 a 5 horas |
+| Proteccion orders | 2 a 4 horas |
 | RabbitMQ/comms | Pendiente |
 | Docker/despliegue | Pendiente |
 | Documentacion | Pendiente |
@@ -67,7 +68,7 @@ Detalle sugerido:
 Total estimado:
 
 ```text
-7 a 11 horas acumuladas en Fases 1 y 2, pendiente total final
+9 a 15 horas acumuladas en Fases 1 a 3, pendiente total final
 ```
 
 ## Errores detectados y corregidos manualmente
@@ -78,6 +79,7 @@ Pendiente de completar.
 |---|---|---|---|
 | 2026-06-19 | No se pudo generar BCrypt con herramientas locales disponibles. | Se uso `PasswordEncoder` en seeder runtime y `pgcrypto` en SQL para insertar hash BCrypt sin almacenar contrasena plana. | `DemoUserSeeder.java`, `sql/06-users-dml.sql` |
 | 2026-06-19 | Gateway test intento conectarse a Eureka no levantado durante `mvnw test`. | Se verifico que era un aviso no bloqueante: el resultado final fue `BUILD SUCCESS`. | `cloud-gateway` logs de test |
+| 2026-06-19 | `orders-service` test intento conectar a PostgreSQL orders no levantado. | Se valido compilacion con `mvnw compile`; test de contexto queda condicionado a levantar PostgreSQL `localhost:5434`. | `orders-service` logs de test |
 
 ## Observaciones de validacion manual
 
