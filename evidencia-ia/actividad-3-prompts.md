@@ -80,3 +80,29 @@ Se genero un nuevo modulo `users-service` con:
 Se decidio no activar seguridad web global en esta fase para no interferir con los endpoints publicos de autenticacion antes de implementar el Gateway defensor en Fase 2. La validacion de `accessToken` se hace explicitamente en el endpoint de perfil.
 
 Tambien se decidio no modificar `docker-compose.yml` todavia. PostgreSQL users y Redis quedan como pendientes operativos para levantar con comandos Docker temporales o integrarlos en Compose durante Fase 8.
+
+## Prompt de implementacion Fase 2
+
+```text
+Implementa unicamente la Fase 2 de la Actividad 3: filtro Java formal en cloud-gateway para phantom token.
+
+No modifiques catalogue-service, orders-service, users-service ni eureka-server. Mantén compatibilidad con Spring Cloud Gateway Server WebMVC. El Gateway debe distinguir rutas publicas y protegidas, leer Authorization: Bearer <opaqueToken>, llamar a users-service /api/v1/auth/validate, inyectar accessToken con JWT interno y responder 401 o 503 de forma controlada.
+```
+
+## Resumen de respuesta Fase 2
+
+Se implemento en `cloud-gateway`:
+
+- filtro Java formal `PhantomTokenFilter` compatible con Gateway MVC;
+- cliente `AuthValidationClient` para resolver `users-service` via Eureka con `LoadBalancerClient`;
+- DTOs de request/response para validacion del token opaco;
+- wrapper `AccessTokenRequestWrapper` para agregar el header `accessToken`;
+- propiedades `gateway.security.*`;
+- rutas `/api/v1/auth/**`, `/api/v1/users/**`, `/api/v1/books/**` y `/api/v1/orders/**`;
+- mantenimiento temporal de rutas legacy de Actividad 2.
+
+## Decision tomada Fase 2
+
+Se uso un filtro Servlet `OncePerRequestFilter` porque el proyecto usa Spring Cloud Gateway Server WebMVC. Esta decision evita usar APIs reactivas de WebFlux que no corresponden al stack actual.
+
+Para validar contra `users-service`, se uso `LoadBalancerClient` y el nombre logico `users-service`, evitando `localhost:8083` como solucion final.
