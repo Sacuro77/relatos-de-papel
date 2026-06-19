@@ -186,3 +186,28 @@ Se creo `comms-service` con:
 ## Decision tomada Fase 5
 
 Se intento usar `spring-boot-starter-mail`, pero Maven fallo descargando el artefacto por certificado PKIX contra Maven Central. Para mantener la fase compilable y demostrable, se dejo implementado el modo mock/log por defecto y un cliente SMTP basico con Java estandar cuando `MAIL_ENABLED=true`. Sustituirlo por Spring Mail queda como pendiente tecnico cuando se resuelva acceso a dependencias mail.
+
+## Prompt de implementacion Fase 6
+
+```text
+Implementa unicamente la Fase 6 de la Actividad 3: WebSocket en comms-service para chat de soporte.
+
+No modifiques catalogue-service, users-service, orders-service ni eureka-server. No modifiques cloud-gateway salvo que sea estrictamente necesario para exponer la ruta WebSocket y primero lo expliques. No implementes Gemini todavia. El servicio debe exponer /ws/support, aceptar conexiones locales, recibir mensajes de texto, responder con mensaje mock y registrar logs de conexion, mensaje, respuesta y cierre.
+```
+
+## Resumen de respuesta Fase 6
+
+Se agrego a `comms-service`:
+
+- configuracion `WebSocketConfig`;
+- endpoint `SupportChatEndpoint`;
+- ruta WebSocket `/ws/support`;
+- respuesta local/mock para mensajes de soporte;
+- logs de conexion abierta, mensaje recibido, respuesta enviada, conexion cerrada y errores;
+- documento tecnico `FASE_6_WEBSOCKET_SUPPORT_CHAT.md`.
+
+## Decision tomada Fase 6
+
+No se modifico `cloud-gateway` porque la fase puede validarse directamente contra `ws://localhost:8084/ws/support`. La exposicion via Gateway queda como ajuste posterior si el frontend final lo requiere.
+
+Se intento usar dependencias especificas de Spring WebSocket, pero Maven volvio a fallar por certificado PKIX al descargar nuevos artefactos. Para mantener el modulo compilable, se implemento WebSocket con Jakarta WebSocket sobre Tomcat embebido, disponible por el stack WebMVC actual.

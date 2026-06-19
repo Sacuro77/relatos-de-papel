@@ -38,7 +38,7 @@ Detalle sugerido:
 | Proteccion orders | 260 | Si, compilado con `orders-service` |
 | RabbitMQ/eventos | 260 | Si, compilado con `orders-service` |
 | `comms-service` SMTP | 650 | Si, compilado en modo mock/log y SMTP basico |
-| WebSocket | Pendiente | Pendiente |
+| WebSocket | 130 | Si, compilado con `comms-service` |
 | Gemini | Pendiente | Pendiente |
 | Docker/Compose | Pendiente | Pendiente |
 | Documentacion | 90 | Si |
@@ -46,7 +46,7 @@ Detalle sugerido:
 Total estimado:
 
 ```text
-2640 lineas aproximadas
+2770 lineas aproximadas
 ```
 
 ## Tiempo estimado ahorrado
@@ -62,13 +62,14 @@ Detalle sugerido:
 | Gateway phantom token | 3 a 5 horas |
 | Proteccion orders | 2 a 4 horas |
 | RabbitMQ/comms | 4 a 6 horas acumuladas en publicacion y consumidor |
+| WebSocket soporte | 1 a 2 horas |
 | Docker/despliegue | Pendiente |
 | Documentacion | Pendiente |
 
 Total estimado:
 
 ```text
-13 a 21 horas acumuladas en Fases 1 a 5, pendiente total final
+14 a 23 horas acumuladas en Fases 1 a 6, pendiente total final
 ```
 
 ## Errores detectados y corregidos manualmente
@@ -81,6 +82,7 @@ Pendiente de completar.
 | 2026-06-19 | Gateway test intento conectarse a Eureka no levantado durante `mvnw test`. | Se verifico que era un aviso no bloqueante: el resultado final fue `BUILD SUCCESS`. | `cloud-gateway` logs de test |
 | 2026-06-19 | `orders-service` test intento conectar a PostgreSQL orders no levantado. | Se valido compilacion con `mvnw compile`; test de contexto queda condicionado a levantar PostgreSQL `localhost:5434`. | `orders-service` logs de test |
 | 2026-06-19 | Maven no pudo descargar `spring-boot-starter-mail` por certificado PKIX. | Se dejo `comms-service` compilable con modo mock/log y cliente SMTP basico con Java estandar; Spring Mail queda pendiente tecnico. | `comms-service`, `FASE_5_COMMS_SERVICE_EMAIL.md` |
+| 2026-06-19 | Maven no pudo descargar dependencias especificas de Spring WebSocket por certificado PKIX. | Se implemento WebSocket con Jakarta WebSocket sobre Tomcat embebido, evitando nuevas descargas y manteniendo `comms-service` compilable. | `WebSocketConfig.java`, `SupportChatEndpoint.java`, `FASE_6_WEBSOCKET_SUPPORT_CHAT.md` |
 
 ## Observaciones de validacion manual
 
