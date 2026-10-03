@@ -1,112 +1,151 @@
-# Relatos de Papel - Actividad 3
+# Relatos de Papel — Actividad 3
 
-Proyecto academico del master Desarrollo Web: Full Stack.  
-Esta Actividad 3 continua directamente el trabajo de la Actividad 2, que ya dejo una base con Eureka, catalogue, orders, Gateway, PostgreSQL y evidencia inicial de IA.
+Proyecto académico de **Desarrollo Web: Full Stack** basado en una arquitectura de microservicios para una librería online.
 
-## Descripcion del proyecto
+Esta rama contiene el desarrollo correspondiente a la **Actividad 3**, construido sobre la base de la Actividad 2.
 
-Relatos de Papel es una arquitectura de microservicios para una libreria online. El sistema debe permitir consultar catalogo, registrar pedidos, autenticar usuarios, proteger datos de cliente, emitir eventos asincronos, enviar comunicaciones y exponer un chat de soporte con integracion de IA.
-
-Estado inicial heredado:
-
-- `eureka-server`: servidor de descubrimiento.
-- `catalogue-service`: gestion y busqueda de libros.
-- `orders-service`: gestion de pedidos.
-- `cloud-gateway`: punto de entrada y enrutamiento.
-- `docker-compose.yml`: PostgreSQL para catalogue y orders.
-
-## Arquitectura objetivo
+## Arquitectura implementada
 
 ```text
-Frontend React
-    |
-    v
-cloud-gateway
-    |-- valida token opaco contra users-service
-    |-- reenvia JWT interno como header accessToken
-    |
-    +--> catalogue-service
-    +--> orders-service -- OrderCreated --> RabbitMQ --> comms-service --> SMTP/Gmail
-    +--> users-service --> PostgreSQL users + Redis
-    +--> comms-service --> WebSocket soporte + Gemini API
+Cliente
+   |
+   v
+Cloud Gateway
+   |
+   +--> Users Service
+   |      +--> PostgreSQL
+   |      +--> Redis
+   |
+   +--> Catalogue Service
+   |
+   +--> Orders Service
+   |      |
+   |      +--> OrderCreated
+   |              |
+   |              v
+   |          RabbitMQ
+   |              |
+   |              v
+   +--------> Comms Service
+                  |
+                  +--> MAIL MOCK
+                  +--> WebSocket de soporte
 
-Todos los servicios deben registrarse en Eureka.
-La comunicacion HTTP interna debe usar nombres Eureka, no localhost:puerto.
+Eureka Server
+   └── descubrimiento de microservicios
 ```
 
-## Como se ejecutara localmente al final
+## Funcionalidades desarrolladas
 
-Al finalizar la Actividad 3, el objetivo es ejecutar toda la arquitectura con:
+- Arquitectura de microservicios con Spring Boot.
+- Service Discovery mediante Eureka.
+- API Gateway como punto de entrada.
+- `users-service` para autenticación y gestión de identidad.
+- Implementación del patrón **Phantom Token**.
+- Token opaco entregado al cliente.
+- Validación del token opaco en Gateway.
+- JWT interno reenviado mediante el header `accessToken`.
+- Protección de endpoints de pedidos.
+- Identidad del usuario obtenida desde el JWT interno y no desde el `userId` enviado por el cliente.
+- Publicación del evento `OrderCreated`.
+- Comunicación asíncrona mediante RabbitMQ.
+- `comms-service` consumidor de eventos.
+- Notificación local mediante `MAIL MOCK`.
+- WebSocket para soporte/chat.
+- PostgreSQL para persistencia.
+- Redis como soporte del mecanismo de autenticación.
 
-```powershell
-docker compose up --build
+## Flujo principal
+
+```text
+Login
+  ↓
+Token opaco
+  ↓
+Gateway
+  ↓
+users-service / validate
+  ↓
+JWT interno (accessToken)
+  ↓
+orders-service protegido
+  ↓
+OrderCreated
+  ↓
+RabbitMQ
+  ↓
+comms-service
+  ↓
+MAIL MOCK
 ```
 
-La ejecucion local final debera levantar:
+## Servicios
 
-- Eureka Server;
-- Cloud Gateway;
-- Catalogue Service;
-- Orders Service;
-- Users Service;
-- Comms Service;
-- PostgreSQL para catalogue;
-- PostgreSQL para orders;
-- PostgreSQL para users;
-- Redis;
-- RabbitMQ;
-- frontend React si se integra dentro del Compose.
+| Componente | Función |
+|---|---|
+| `eureka-server` | Registro y descubrimiento de servicios |
+| `cloud-gateway` | Entrada al sistema y validación del token opaco |
+| `users-service` | Autenticación, identidad y validación de tokens |
+| `catalogue-service` | Gestión y consulta del catálogo |
+| `orders-service` | Gestión protegida de pedidos |
+| `comms-service` | Eventos, notificaciones y soporte WebSocket |
+| PostgreSQL | Persistencia de datos |
+| Redis | Soporte del mecanismo de autenticación |
+| RabbitMQ | Mensajería asíncrona |
 
-Las pruebas funcionales deberan hacerse siempre contra el Gateway, por ejemplo:
+## Estado de validación
 
-```powershell
-curl.exe -i http://localhost:8080/api/catalogue/search
-curl.exe -i -X POST http://localhost:8080/api/auth/login
-curl.exe -i -X POST http://localhost:8080/api/orders/create -H "Authorization: Bearer TOKEN_OPACO"
+| Funcionalidad | Estado |
+|---|---|
+| Login y autenticación | ✅ Validado |
+| Phantom Token | ✅ Validado |
+| Gateway sin token devuelve 401 | ✅ Validado |
+| Gateway con token válido | ✅ Validado |
+| Protección de pedidos | ✅ Validado |
+| Identidad obtenida desde JWT | ✅ Validado |
+| Publicación de eventos RabbitMQ | ✅ Implementada |
+| Consumo de eventos RabbitMQ | ✅ Validado |
+| Notificación `MAIL MOCK` | ✅ Validado |
+| WebSocket de soporte | 🟡 Implementado, validación parcial |
+| Docker Compose integral | 🟡 Pendiente de completar |
+| Despliegue remoto público | 🟡 Pendiente |
+| Integración Gemini | 🟡 Pendiente / no cerrada |
+
+## Evidencia y documentación
+
+La documentación técnica de la Actividad 3 se encuentra en:
+
+```text
+docs/actividad3/
 ```
 
-## Servicios previstos
+La evidencia del uso de inteligencia artificial se encuentra en:
 
-| Servicio | Estado inicial | Estado objetivo |
-|---|---|---|
-| `eureka-server` | Existente | Registrar todos los microservicios. |
-| `cloud-gateway` | Existente | Defender endpoints, validar token opaco e inyectar `accessToken`. |
-| `catalogue-service` | Existente | Mantener catalogo y busqueda; posible Elasticsearch opcional. |
-| `orders-service` | Existente | Proteger pedidos, leer usuario desde JWT y emitir evento `OrderCreated`. |
-| `users-service` | Pendiente | Registro/login, JWT, token opaco, Redis y validacion para Gateway. |
-| `comms-service` | Pendiente | Consumir eventos, enviar correo, WebSocket y Gemini. |
-| Frontend React | Pendiente/no localizado | Consumir siempre mediante API Gateway. |
-| Redis | Pendiente | Almacenar token opaco -> JWT. |
-| RabbitMQ | Pendiente | Gestionar eventos asincronos. |
-| Elasticsearch | Opcional | Busqueda avanzada de catalogo. |
+```text
+evidencia-ia/
+```
 
-## Checklist de entrega
+Incluye métricas, validaciones manuales, errores detectados, correcciones aplicadas y decisiones técnicas tomadas durante el desarrollo.
 
-- [ ] Diagnostico inicial documentado.
-- [ ] Matriz de cumplimiento creada.
-- [ ] Plan por fases creado.
-- [ ] Evidencia IA inicial creada.
-- [ ] `users-service` implementado.
-- [ ] PostgreSQL de usuarios configurado.
-- [ ] Redis configurado.
-- [ ] Login devuelve token opaco.
-- [ ] Gateway valida token opaco contra `users-service`.
-- [ ] Gateway responde 401 ante token ausente o invalido.
-- [ ] Gateway reenvia JWT como header `accessToken`.
-- [ ] Endpoints de datos de cliente protegidos.
-- [ ] `orders-service` lee identidad desde `accessToken`.
-- [ ] `orders-service` emite evento `OrderCreated`.
-- [ ] RabbitMQ configurado.
-- [ ] `comms-service` consume eventos.
-- [ ] Envio SMTP/Gmail funcionando.
-- [ ] WebSocket de soporte funcionando.
-- [ ] Integracion Gemini funcionando.
-- [ ] Todos los servicios registrados en Eureka.
-- [ ] Comunicacion HTTP interna por nombres Eureka.
-- [ ] Frontend consume exclusivamente mediante Gateway.
-- [ ] Dockerfiles creados.
-- [ ] Docker Compose local completo.
-- [ ] Despliegue remoto publico preparado.
-- [ ] Evidencia IA completada con prompts, resultados, lineas y tiempo.
-- [ ] Video memoria grabado.
-- [ ] Elasticsearch evaluado como extra opcional.
+## Documentación adicional
+
+La planificación y documentación inicial de la actividad se conserva en:
+
+[`README_ACTIVIDAD_3.md`](README_ACTIVIDAD_3.md)
+
+## Ramas del proyecto
+
+| Rama | Contenido |
+|---|---|
+| `main` | Actividad 1 |
+| `actividad-02` | Actividad 2 |
+| `actividad-03` | Actividad 3 |
+
+## Repositorio
+
+**Relatos de Papel**  
+https://github.com/Sacuro77/relatos-de-papel
+
+---
+
+Proyecto académico desarrollado como parte del Máster en Desarrollo Web: Full Stack.
